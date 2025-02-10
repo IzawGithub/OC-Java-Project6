@@ -1,0 +1,117 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'org.springframework.boot' version '3.4.2'
+    id 'io.spring.dependency-management' version '1.1.6'
+
+    id 'com.diffplug.spotless' version '6.25.0'
+    id 'info.solidsoft.pitest' version '1.15.0'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+group = 'com.paymybuddy'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+ext {
+    set('snippetsDir', file("build/generated-snippets"))
+}
+
+dependencies {
+    // -- Database --
+    runtimeOnly 'org.postgresql:postgresql'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+
+    // -- Backend --
+    annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+
+    // -- Security --
+    implementation 'org.bouncycastle:bcprov-jdk18on:1.78.1'   
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // -- Frontend --
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.3.0'
+
+    // -- Testing --
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'com.h2database:h2'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.diffplug.selfie:selfie-runner-junit5:2.4.1'
+
+    // -- Custom dependency --
+    implementation 'net.xyzsd:dichotomy:1.0'
+    implementation 'net.xyzsd.fluent:fluent-functions-icu:0.70'
+
+}
+
+// -- Building --
+
+tasks.withType(AbstractArchiveTask).configureEach {
+  preserveFileTimestamps = false
+  reproducibleFileOrder = true
+}
+
+// -- Linting --
+
+spotless {
+    java {
+        importOrder()
+        removeUnusedImports()
+        cleanthat()
+            .version('2.21')
+            .sourceCompatibility('21')
+        // This fail for `spotlessApply` because it doesn't completely support Java 21.
+        // Formatting the file individually works fine tho
+        palantirJavaFormat('2.50.0').style('AOSP').formatJavadoc(true)
+        formatAnnotations()
+    }
+}
+
+// -- Testing --
+
+test {
+    finalizedBy jacocoTestReport // report is always generated after tests run
+}
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+}
+
+tasks.named('test') {
+    outputs.dir snippetsDir
+    useJUnitPlatform()
+}
+
+test {
+    environment project.properties.subMap(["selfie"]) 
+    inputs.files(fileTree("src/test") { // optional, improves up-to-date checking
+        include "**/*.ss"
+    })
+}
+pitest {
+    junit5PluginVersion = "1.2.1"
+}
+
