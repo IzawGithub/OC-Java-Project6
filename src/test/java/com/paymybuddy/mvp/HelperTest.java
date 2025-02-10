@@ -1,9 +1,15 @@
 package com.paymybuddy.mvp;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.paymybuddy.mvp.model.User;
 import com.paymybuddy.mvp.model.internal.Email;
 import com.paymybuddy.mvp.model.internal.Money;
 import com.paymybuddy.mvp.model.internal.Secret;
+
+import org.springframework.lang.NonNull;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -32,5 +38,17 @@ public final class HelperTest {
 
     public static Money money() {
         return Money.builder().uint(new BigDecimal("13.37")).tryBuild().expect();
+    }
+
+    // -- lombok.ExtensionMethod --
+
+    public static ResultActions andExpectRedirectAuth(@NonNull final ResultActions mvc)
+            throws Exception {
+        return andExpectRedirect(mvc, "/");
+    }
+
+    public static ResultActions andExpectRedirect(
+            @NonNull final ResultActions mvc, @NonNull final String redirectUrl) throws Exception {
+        return mvc.andExpectAll(status().isFound(), redirectedUrl(redirectUrl));
     }
 }
