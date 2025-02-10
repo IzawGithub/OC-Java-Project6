@@ -1,5 +1,21 @@
 # errors
 
+## errors/EErrorCrud.java
+
+-crud-error =
+    CRUD error:
+
+EErrorCrud-exist =
+    {-crud-error}
+    User '{$id}' {$exist ->
+        [true] already
+        [false] does not
+        *[other] unknown
+    } exist.
+EErrorCrud-equals-values =
+    {-crud-error}
+    Operation cannot be done on the same user '{$id}'.
+
 ## errors/EErrorEmail.java
 
 -email-error =
