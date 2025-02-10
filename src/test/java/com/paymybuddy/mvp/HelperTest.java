@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.paymybuddy.mvp.model.User;
+import com.paymybuddy.mvp.model.dto.UserDTO;
 import com.paymybuddy.mvp.model.internal.Email;
 import com.paymybuddy.mvp.model.internal.Money;
 import com.paymybuddy.mvp.model.internal.Secret;
@@ -27,12 +28,30 @@ public final class HelperTest {
                 .build();
     }
 
+    public static UserDTO johnDoeDTO() {
+        final var user = johnDoe();
+        return UserDTO.builder()
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .password(JOHN_DOE_PASSWORD)
+                .build();
+    }
+
     public static User janeDoe() {
         return User.builder()
                 .id(UUID.fromString("76543210-dcba-cba1-dcba-ba9876543210"))
                 .email(Email.builder().email("jane.doe@test.com").tryBuild().expect())
                 .username("Jane Doe")
                 .password(new Secret(JANE_DOE_PASSWORD))
+                .build();
+    }
+
+    public static UserDTO janeDoeDTO() {
+        final var user = janeDoe();
+        return UserDTO.builder()
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .password(JANE_DOE_PASSWORD)
                 .build();
     }
 
