@@ -49,4 +49,19 @@ public sealed class EErrorCrud extends EErrorPayMyBuddy {
                                     Map.entry("exist", exist.asBool().toString())));
         }
     }
+
+    @EqualsAndHashCode(callSuper = true)
+    @Value
+    public class EqualsValues extends EErrorCrud {
+        @JsonUnwrapped
+        @JsonProperty("id")
+        @NonNull final Object id;
+
+        @Override
+        public String toString() {
+            return Localisation.getInstance()
+                    .getBundle()
+                    .format("EErrorCrud-equals-values", Map.of("id", id));
+        }
+    }
 }
