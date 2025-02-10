@@ -11,4 +11,4 @@ import lombok.EqualsAndHashCode;
 @JsonPropertyOrder(alphabetic = true)
 @JsonIgnoreProperties({"cause", "localizedMessage", "message", "stackTrace", "suppressed"})
 public sealed class EErrorPayMyBuddy extends Exception
-        permits EErrorCrud, EErrorEmail, EErrorMoney, EErrorTransaction {}
+        permits EErrorAuth, EErrorCrud, EErrorEmail, EErrorMoney, EErrorTransaction {}

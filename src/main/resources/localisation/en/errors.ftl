@@ -1,5 +1,14 @@
 # errors
 
+## errors/EErrorAuth.java
+
+-auth-error =
+    Authentication error:
+
+EErrorAuth-invalid-username-or-password =
+    {-auth-error}
+    Invalid username and/or password.
+
 ## errors/EErrorCrud.java
 
 -crud-error =
