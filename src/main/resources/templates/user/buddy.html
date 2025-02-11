@@ -13,6 +13,7 @@
             <div class="card bg-base-100 shadow-xl">
                 <div class="card-body">
                     <h2 class="card-title">Add a buddy</h2>
+                    <div th:replace="~{fragments/Error :: Error}"></div>
                     <form th:action="@{/user/buddy}" th:method="post" action="#" class="space-y-2">
                         <label th:replace="~{fragments/input/Email :: Email(required=true)}"></label>    
                         <div class="card-actions p-4 justify-center">

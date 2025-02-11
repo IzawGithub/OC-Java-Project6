@@ -242,10 +242,27 @@ public class UserController {
     @PostMapping("/buddy")
     public @NonNull ModelAndView tryBuddyAdd(
             @AuthenticationPrincipal @NonNull final UserDetails userAuth,
-            @NonNull final Email maybeUser) {
+            @RequestParam(value = "email", required = false) final String maybeStringEmail,
+            @NonNull final RedirectAttributes redirectAttributes) {
         final var user = helperController.authToUser(userAuth);
-        userService.tryCreateBuddy(user, maybeUser);
-        return new ModelAndView("redirect:/");
+
+        final var result = Result.ofNullable(maybeStringEmail)
+            .mapErr(err -> new EErrorEmail().new Null())
+            .mapErr(EErrorPayMyBuddy.class::cast)
+            .flatMap(stringEmail -> Email.builder()
+                .email(stringEmail)
+                .tryBuild()
+                .mapErr(EErrorPayMyBuddy.class::cast)
+            )
+            .flatMap(maybeUser -> userService.tryCreateBuddy(user, maybeUser));
+        return switch(result) {
+            case OK(final var ok) -> new ModelAndView("redirect:/user");
+            case Err(final var err) -> {
+                redirectAttributes.addFlashAttribute("error", err);
+
+                yield new ModelAndView("redirect:/user/buddy");
+            }
+        };
     }
 
     // -- Beans --
