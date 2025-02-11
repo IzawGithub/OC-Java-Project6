@@ -1,0 +1,11 @@
+FROM docker.io/eclipse-temurin:21-jdk-alpine
+
+WORKDIR /app
+
+COPY gradlew gradlew
+COPY gradle gradle
+COPY build.gradle build.gradle
+
+RUN ./gradlew dependencies
+
+CMD ["./gradlew", "bootRun"]
