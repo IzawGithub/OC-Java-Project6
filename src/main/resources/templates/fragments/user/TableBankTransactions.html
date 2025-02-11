@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+>
+    <div
+        th:fragment="TableBankTransactions"
+        class="indicator"
+    >
+        <span
+            class="indicator-item indicator-top indicator-start badge badge-primary"
+        >
+            My bank transactions
+        </span>
+        <div class="place-items-center space-y-4">
+            <table class="table table-zebra sortable">
+                <thead>
+                    <tr>
+                        <th id="bankTransactionDate">Date</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="bankTransaction: ${bankTransactions}">
+                        <td>
+                            [[${#temporals.format(bankTransaction.getDate())}]]
+                        </td>
+                        <td>
+                            [[${#numbers.formatCurrency(bankTransaction.getAmount())}]]
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</html>

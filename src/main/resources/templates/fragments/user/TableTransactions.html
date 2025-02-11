@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+>
+    <div
+        th:fragment="TableTransactions"
+        class="indicator"
+    >
+        <span
+            class="indicator-item indicator-top indicator-start badge badge-primary"
+        >
+            My transactions
+        </span>
+        <div class="place-items-center space-y-4">
+            <table class="table table-zebra sortable">
+                <thead>
+                    <tr>
+                        <th id="transactionDate">Date</th>
+                        <th>Buddy</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="transaction: ${transactions}">
+                        <td>
+                            [[${#temporals.format(transaction.getDate())}]]
+                        </td>
+                        <td>[[${transaction.getUser().getUsername()}]]</td>
+                        <td>[[${transaction.getDescription()}]]</td>
+                        <td>
+                            [[${#numbers.formatCurrency(transaction.getAmount())}]]
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</html>
