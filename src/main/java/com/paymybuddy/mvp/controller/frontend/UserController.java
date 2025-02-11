@@ -9,6 +9,7 @@ import com.paymybuddy.mvp.model.dto.TransactionDTO;
 import com.paymybuddy.mvp.model.dto.UserUpdateDTO;
 import com.paymybuddy.mvp.model.internal.Email;
 import com.paymybuddy.mvp.model.internal.Money;
+import com.paymybuddy.mvp.model.internal.Secret;
 import com.paymybuddy.mvp.service.TransactionService;
 import com.paymybuddy.mvp.service.UserService;
 
@@ -20,18 +21,22 @@ import net.xyzsd.dichotomy.Result;
 import net.xyzsd.dichotomy.Result.Err;
 import net.xyzsd.dichotomy.Result.OK;
 
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -54,6 +59,12 @@ public class UserController {
         @NonNull private final String path;
 
         @NonNull private final RequestMethod method;
+    }
+
+    @InitBinder
+    void initBinder(final WebDataBinder binder) {
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+        binder.registerCustomEditor(Secret.class, new StringTrimmerEditor(true));
     }
 
     @GetMapping
@@ -194,22 +205,23 @@ public class UserController {
     @PutMapping("/profil/update")
     public @NonNull ModelAndView tryProfilUpdate(
             @AuthenticationPrincipal @NonNull final UserDetails userAuth,
-            @NonNull final UserUpdateDTO userUpdateDTO) {
+            @RequestParam(required = false) final String username,
+            @RequestParam(value = "email", required = false) final String maybeStringEmail,
+            @RequestParam(required = false) final Secret password,
+            @NonNull final RedirectAttributes redirectAttributes) {
         final var user = helperController.authToUser(userAuth);
 
-        final var result = switch(maybeStringEmail) {
-            case String stringEmail -> Email.builder()
-                    .email(stringEmail)
-                    .tryBuild()
-                    .mapErr(EErrorPayMyBuddy.class::cast)
-                    .map(email -> UserUpdateDTO.builder().username(username).email(email).password(password).build())
-                    .flatMap(userUpdateDTO -> userService.tryUpdateUser(user, userUpdateDTO));
+        final var userUpdateDTO = Result.ofNullable(maybeStringEmail)
+            .mapErr(err -> new EErrorEmail().new Null())
+            .mapErr(EErrorPayMyBuddy.class::cast)
+            .flatMap(stringEmail -> Email.builder()
+                .email(stringEmail)
+                .tryBuild()
+                .mapErr(EErrorPayMyBuddy.class::cast)
+                .map(email -> UserUpdateDTO.builder().username(username).email(email).password(password).build()))
+            .orElse(UserUpdateDTO.builder().username(username).password(password).build());
 
-            case null -> {
-                final var userUpdateDTO = UserUpdateDTO.builder().username(username).password(password).build();
-                yield userService.tryUpdateUser(user, userUpdateDTO);
-            }
-        };
+        final var result = userService.tryUpdateUser(user, userUpdateDTO);
         return switch(result) {
             case OK(final var ok) -> new ModelAndView("redirect:/user/profil");
             case Err(final var err) -> {
