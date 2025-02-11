@@ -130,21 +130,51 @@ public class UserController {
     @PostMapping("/bank/fromAppToBank")
     public ModelAndView fromAppToBank(
             @AuthenticationPrincipal @NonNull final UserDetails userAuth,
-            @NonNull final BigDecimal change) {
-        final var money = Money.builder().uint(change).tryBuild().expect();
+            @RequestParam(value = "change", required = false) final BigDecimal maybeChange,
+            @NonNull final RedirectAttributes redirectAttributes) {
         final var user = helperController.authToUser(userAuth);
-        transactionService.tryFromAppToBank(user, money);
-        return new ModelAndView("redirect:/user");
+
+        final var result = Result.ofNullable(maybeChange)
+            .mapErr(err -> new EErrorMoney().new Null())
+            .mapErr(EErrorPayMyBuddy.class::cast)
+            .flatMap(change -> Money.builder()
+            .uint(change)
+            .tryBuild()
+            .mapErr(EErrorPayMyBuddy.class::cast))
+            .flatMap(money -> transactionService.tryFromAppToBank(user, money));
+        return switch (result) {
+            case OK(final var ok) -> new ModelAndView("redirect:/user");
+            case Err(final var err) -> {
+                redirectAttributes.addFlashAttribute("error", err);
+
+                yield new ModelAndView("redirect:/user/bank");
+            }
+        };
     }
 
     @PostMapping("/bank/fromBankToApp")
     public ModelAndView fromBankToApp(
             @AuthenticationPrincipal @NonNull final UserDetails userAuth,
-            @NonNull final BigDecimal change) {
-        final var money = Money.builder().uint(change).tryBuild().expect();
+            @RequestParam(value = "change", required = false) final BigDecimal maybeChange,
+            @NonNull final RedirectAttributes redirectAttributes) {
         final var user = helperController.authToUser(userAuth);
-        transactionService.fromBankToApp(user, money);
-        return new ModelAndView("redirect:/user");
+
+        final var result = Result.ofNullable(maybeChange)
+            .mapErr(err -> new EErrorMoney().new Null())
+            .mapErr(EErrorPayMyBuddy.class::cast)
+            .flatMap(change -> Money.builder()
+            .uint(change)
+            .tryBuild()
+            .mapErr(EErrorPayMyBuddy.class::cast))
+            .map(money -> transactionService.fromBankToApp(user, money));
+        return switch (result) {
+            case OK(final var ok) -> new ModelAndView("redirect:/user");
+            case Err(final var err) -> {
+                redirectAttributes.addFlashAttribute("error", err);
+
+                yield new ModelAndView("redirect:/user/bank");
+            }
+        };
     }
 
     @GetMapping("/profil")
@@ -166,8 +196,28 @@ public class UserController {
             @AuthenticationPrincipal @NonNull final UserDetails userAuth,
             @NonNull final UserUpdateDTO userUpdateDTO) {
         final var user = helperController.authToUser(userAuth);
-        userService.tryUpdateUser(user, userUpdateDTO);
-        return new ModelAndView("redirect:/user/profil");
+
+        final var result = switch(maybeStringEmail) {
+            case String stringEmail -> Email.builder()
+                    .email(stringEmail)
+                    .tryBuild()
+                    .mapErr(EErrorPayMyBuddy.class::cast)
+                    .map(email -> UserUpdateDTO.builder().username(username).email(email).password(password).build())
+                    .flatMap(userUpdateDTO -> userService.tryUpdateUser(user, userUpdateDTO));
+
+            case null -> {
+                final var userUpdateDTO = UserUpdateDTO.builder().username(username).password(password).build();
+                yield userService.tryUpdateUser(user, userUpdateDTO);
+            }
+        };
+        return switch(result) {
+            case OK(final var ok) -> new ModelAndView("redirect:/user/profil");
+            case Err(final var err) -> {
+                redirectAttributes.addFlashAttribute("error", err);
+
+                yield new ModelAndView("redirect:/user/profil/update");
+            }
+        };
     }
 
     @DeleteMapping("/profil/update")
