@@ -14,6 +14,10 @@ PayMyBuddy enables the sharing of real world currency between users in a simple,
     - [Gradle](#gradle)
     - [Container](#container)
   - [Database schema](#database-schema)
+  - [Testing](#testing)
+    - [Coverage](#coverage)
+    - [Test execution](#test-execution)
+    - [Mutation](#mutation)
 
 ## Running the application
 
@@ -65,3 +69,19 @@ podman-compose up -d
 ## Database schema
 
 ![Schema](./assets/db_physical_schema.svg)
+
+## Testing
+
+This application was tested on a Linux machine (Ubuntu 24.10 x86_64).
+
+### Coverage
+
+![Jacoco coverage](./assets/coverage.png)
+
+### Test execution
+
+![Surefire](./assets/surefire.png)
+
+### Mutation
+
+![PIT test](./assets/mutation.png)
