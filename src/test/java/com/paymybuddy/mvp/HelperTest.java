@@ -14,10 +14,15 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 public final class HelperTest {
     private static final String JOHN_DOE_PASSWORD = "password";
     private static final String JANE_DOE_PASSWORD = "Jane Doe password";
+
+    private static final Pattern REGEX_CSRF =
+            Pattern.compile("(?<begin><input .* name=\"_csrf\" value=\")(?<value>.*)(?<end>\"/>)");
+    private static final Pattern REGEX_ARGON2 = Pattern.compile("\\$argon2.*");
 
     public static User johnDoe() {
         return User.builder()
@@ -57,6 +62,20 @@ public final class HelperTest {
 
     public static Money money() {
         return Money.builder().uint(new BigDecimal("13.37")).tryBuild().expect();
+    }
+
+    public static String sanitizedHtml(@NonNull final String html) {
+        var sanitisedHtml = html;
+        final var matcherCsrf = REGEX_CSRF.matcher(sanitisedHtml);
+        if (matcherCsrf.find()) {
+            sanitisedHtml = matcherCsrf.replaceAll("${begin}${end}");
+        }
+        final var matcherArgon2 = REGEX_ARGON2.matcher(sanitisedHtml);
+        if (matcherArgon2.find()) {
+            sanitisedHtml = matcherArgon2.replaceAll("");
+        }
+        return sanitisedHtml;
+    }
     }
 
     // -- lombok.ExtensionMethod --
