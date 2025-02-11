@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/Auth}"
+>
+    <form
+        layout:fragment="Form"
+        th:action="@{/auth/sign-up}"
+        th:method="post"
+        action="#"
+        class="space-y-2"
+    >
+        <label
+            th:replace="~{fragments/input/User :: User(required=true)}"
+        ></label>
+
+        <label
+            th:replace="~{fragments/input/Email :: Email(required=true)}"
+        ></label>
+        <label
+            th:replace="~{fragments/input/Password :: Password(required=true)}"
+        ></label>
+        <th:block layout:fragment="FormEnd"></th:block>
+
+        <div class="card-actions flex-col items-center space-y-1 py-1">
+            <button class="btn btn-info">
+                Sign up
+            </button>
+            <a th:href="@{/auth/log-in}" class="prose"
+            >Already have an account? Log-in</a>
+        </div>
+    </form>
+</html>
