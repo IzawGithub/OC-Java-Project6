@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  class="h-dvh"
+  data-theme="light"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      th:href="@{/favicon/favicon.svg}"
+      rel="icon"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>[[${applicationName}]]</title>
+    <!-- TODO: Use an actual package manager instead of downloaded CDN file -->
+    <link
+      th:href="@{/css/daisyui.min.css}"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script th:src="@{/js/tailwind.min.js}"></script>
+  </head>
+  <body
+    th:block
+    layout:fragment="root"
+    id="root"
+    class="flex-1 flex-col"
+  >
+  </body>
+</html>
