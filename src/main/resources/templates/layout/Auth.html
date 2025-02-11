@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/Base}"
+>
+    <body layout:fragment="root" class="flex-1">
+        <div
+            class="flex h-screen justify-center items-center place-items-center"
+        >
+            <div class="card bg-base-100 w-96 place-items-center shadow-xl">
+                <div class="card-body">
+                    <h2 th:replace="~{fragments/Title :: Title}"></h2>
+
+                    <div
+                        th:if="${param.error}"
+                        role="alert"
+                        class="alert alert-warning"
+                    >
+                        <svg th:replace="~{fragments/icons/Warning :: Warning}"></svg>
+                        <span>Invalid username and/or password.</span>
+                    </div>
+                    <div
+                        th:if="${param.logout}"
+                        role="alert"
+                        class="alert alert-info"
+                    >
+                        <svg th:replace="~{fragments/icons/Info :: Info}"></svg>
+                        <span>You have been logged out.</span>
+                    </div>
+
+                    <form layout:fragment="Form">
+                        <!-- I want to put form data there and use layout to change the form attributes but Thymeleaf doesn't work there for some reason -->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
