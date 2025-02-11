@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/Base}"
+>
+  <body layout:fragment="root">
+    <div
+      class="flex flex-1 h-screen justify-center items-center place-items-center"
+    >
+      <div class="card bg-base-100 w-96 place-items-center shadow-xl">
+        <div class="card-body">
+          <h2 th:replace="~{fragments/Title :: Title}"></h2>
+          <div class="flex w-full">
+            <div
+              class="card rounded-box grid h-20 flex-grow place-items-center"
+            >
+              <a
+                th:href="@{/auth/log-in}"
+                role="button"
+                class="btn btn-info"
+              >
+                Log-in
+              </a>
+            </div>
+            <div class="divider divider-horizontal"></div>
+            <div
+              class="card rounded-box grid h-20 flex-grow place-items-center"
+            >
+              <a
+                th:href="@{/auth/sign-up}"
+                role="button"
+                class="btn btn-info"
+              >
+                Sign-up
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
