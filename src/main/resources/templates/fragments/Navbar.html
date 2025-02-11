@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+>
+    <div th:fragment="Navbar" class="navbar bg-base-100">
+        <div class="navbar-start">
+            <a
+                th:href="@{/user}"
+                class="btn btn-ghost text-xl link link-hover"
+            >
+                <img th:src="@{/favicon/favicon.svg}" class="h-6 w-6" />
+                [[${applicationName}]]
+            </a>
+        </div>
+        <div class="navbar-end">
+            <ul class="menu menu-horizontal px-1">
+                <li th:each="navbar: ${navbarItems}">
+                    <form
+                        th:action="@{{navbar}(navbar=${navbar.getPath()})}"
+                        th:method="${navbar.getMethod()}"
+                        action="#"
+                    >
+                        <button>
+                            [[${#strings.capitalize(#strings.toLowerCase(navbar))}]]
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</html>
