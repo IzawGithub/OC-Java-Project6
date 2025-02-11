@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+>
+    <input
+        th:fragment="Change"
+        th:with="required=${required} ?: false, placeholder=${placeholder} ?: 'Amount'"
+        type="number"
+        name="change"
+        th:required="${required}"
+        th:placeholder="${placeholder}"
+        class="join-item input input-bordered"
+    />
+</html>

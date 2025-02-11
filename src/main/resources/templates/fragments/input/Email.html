@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+>
+    <label
+        th:fragment="Email"
+        th:with="required=${required} ?: false, placeholder=${placeholder} ?: 'Email'"
+        class="input input-bordered flex items-center gap-2"
+    >
+        <svg th:replace="~{fragments/icons/Email :: Email}"></svg>
+        <input
+            name="email"
+            type="text"
+            th:required="${required}"
+            th:placeholder="${placeholder}"
+            class="grow"
+        />
+    </label>
+</html>

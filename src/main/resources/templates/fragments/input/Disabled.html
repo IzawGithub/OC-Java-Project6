@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+>
+    <input
+        th:fragment="Disabled(placeholder)"
+        th:placeholder="${placeholder}"
+        type="text"
+        class="input input-bordered flex items-center gap-2"
+        disabled
+    />
+</html>

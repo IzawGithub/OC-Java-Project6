@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+>
+    <label
+        th:fragment="Checkbox(checkboxText)"
+        th:with="name=${name} ?: null, placeholder=${placeholder} ?: 'Email'"
+        class="cursor-pointer label"
+    >
+        <span class="label-text">[[${checkboxText}]]</span>
+        <input
+            th:name="${name}"
+            type="checkbox"
+            class="checkbox checkbox-info"
+        />
+    </label>
+</html>
