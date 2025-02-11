@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+>
+    <div
+        th:fragment="Error"
+        th:if="${error != null}"
+        role="alert"
+        class="alert alert-warning"
+    >
+        <svg th:replace="~{fragments/icons/Warning :: Warning}"></svg>
+        <span
+            th:utext="${#strings.replace(
+                #strings.replace(
+                    #strings.escapeJava(error.toString()),
+                    '\n',
+                    '&lt;br /&gt;'
+                ),
+                '\t',
+                '&emsp;'
+            )}"
+        ></span>
+    </div>
+</html>
