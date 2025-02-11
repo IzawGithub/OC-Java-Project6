@@ -10,6 +10,10 @@ PayMyBuddy enables the sharing of real world currency between users in a simple,
 
 - [Pay My Buddy](#pay-my-buddy)
   - [Table of contents](#table-of-contents)
+  - [Tech stack](#tech-stack)
+    - [Database](#database)
+    - [Backend](#backend)
+    - [Frontend](#frontend)
   - [Running the application](#running-the-application)
     - [Gradle](#gradle)
     - [Container](#container)
@@ -18,6 +22,24 @@ PayMyBuddy enables the sharing of real world currency between users in a simple,
     - [Coverage](#coverage)
     - [Test execution](#test-execution)
     - [Mutation](#mutation)
+
+## Tech stack
+
+### Database
+
+- [PostgreSQL](https://www.postgresql.org/): SQL database.
+- [SQLx](https://github.com/launchbadge/sqlx): Simple SQL migration.
+
+### Backend
+
+- [Gradle](https://gradle.org/): Integrated build tool with `gradlew`.
+- [Java](https://www.java.com/en/) >=21.
+- [Spring boot](https://spring.io/projects/spring-boot): Configure a Spring project.
+
+### Frontend
+
+- [Thymeleaf](https://www.thymeleaf.org/): Java templating engine.
+- [TailwindCSS](https://tailwindcss.com/): CSS framework.
 
 ## Running the application
 
