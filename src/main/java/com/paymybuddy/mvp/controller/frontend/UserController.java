@@ -1,6 +1,9 @@
 package com.paymybuddy.mvp.controller.frontend;
 
 import com.paymybuddy.mvp.controller.backend.ApiAuthController;
+import com.paymybuddy.mvp.errors.EErrorEmail;
+import com.paymybuddy.mvp.errors.EErrorMoney;
+import com.paymybuddy.mvp.errors.EErrorPayMyBuddy;
 import com.paymybuddy.mvp.model.BankTransaction;
 import com.paymybuddy.mvp.model.dto.TransactionDTO;
 import com.paymybuddy.mvp.model.dto.UserUpdateDTO;
@@ -13,6 +16,9 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.xyzsd.dichotomy.Result;
+import net.xyzsd.dichotomy.Result.Err;
+import net.xyzsd.dichotomy.Result.OK;
 
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,8 +33,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.util.AbstractMap.SimpleEntry;
 
 @AllArgsConstructor
 @Controller
@@ -69,9 +77,46 @@ public class UserController {
     @PostMapping("/transaction")
     public @NonNull ModelAndView fromUserToUser(
             @AuthenticationPrincipal @NonNull final UserDetails userAuth,
-            @NonNull final TransactionDTO transactionDTO) {
+            @RequestParam(value = "email", required = false) final String maybeStringEmail,
+            @RequestParam(value = "change", required = false) final BigDecimal maybeChange,
+            @RequestParam(value = "description", required = false) final String maybeDescription,
+            @NonNull final RedirectAttributes redirectAttributes) {
         final var user = helperController.authToUser(userAuth);
-        transactionService.tryFromUserToUser(user, transactionDTO);
+
+        final var resultEmail = Result.ofNullable(maybeStringEmail)
+            .mapErr(err -> new EErrorEmail().new Null())
+            .mapErr(EErrorPayMyBuddy.class::cast)
+            .flatMap(stringEmail -> Email.builder()
+                .email(stringEmail)
+                .tryBuild()
+                .mapErr(EErrorPayMyBuddy.class::cast)
+        );
+        final var resultChange = Result.ofNullable(maybeChange)
+            .mapErr(err -> new EErrorMoney().new Null())
+            .mapErr(EErrorPayMyBuddy.class::cast)
+            .flatMap(change -> Money.builder()
+                .uint(change)
+                .tryBuild()
+                .mapErr(EErrorPayMyBuddy.class::cast)
+        );
+
+        final var result = resultEmail
+            .flatMap(email -> resultChange.map(change -> new SimpleEntry<>(email, change)))
+            .map(tuple -> TransactionDTO.builder()
+                .maybeReceiver(tuple.getKey())
+                .change(tuple.getValue())
+                .description(maybeDescription)
+                .build()
+            )
+            .flatMap(transactionDTO -> transactionService.tryFromUserToUser(user, transactionDTO)
+        );
+
+        switch (result) {
+            case OK(final var ok) -> {}
+            case Err(final var err) -> redirectAttributes
+                .addFlashAttribute("error", err);
+        }
+
         return new ModelAndView("redirect:/user");
     }
 
