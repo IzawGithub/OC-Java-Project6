@@ -4,6 +4,7 @@ import com.paymybuddy.mvp.controller.backend.ApiAuthController;
 import com.paymybuddy.mvp.model.BankTransaction;
 import com.paymybuddy.mvp.model.dto.TransactionDTO;
 import com.paymybuddy.mvp.model.dto.UserUpdateDTO;
+import com.paymybuddy.mvp.model.internal.Email;
 import com.paymybuddy.mvp.model.internal.Money;
 import com.paymybuddy.mvp.service.TransactionService;
 import com.paymybuddy.mvp.service.UserService;
@@ -127,6 +128,20 @@ public class UserController {
         final var session = request.getSession();
         session.invalidate();
         SecurityContextHolder.clearContext();
+        return new ModelAndView("redirect:/");
+    }
+
+    @GetMapping("/buddy")
+    public @NonNull ModelAndView buddyForm() {
+        return new ModelAndView();
+    }
+
+    @PostMapping("/buddy")
+    public @NonNull ModelAndView tryBuddyAdd(
+            @AuthenticationPrincipal @NonNull final UserDetails userAuth,
+            @NonNull final Email maybeUser) {
+        final var user = helperController.authToUser(userAuth);
+        userService.tryCreateBuddy(user, maybeUser);
         return new ModelAndView("redirect:/");
     }
 

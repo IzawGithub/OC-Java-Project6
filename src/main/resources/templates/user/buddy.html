@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/Base}"
+>
+    <body layout:fragment="root" class="flex-1 flex-col">
+        <div th:replace="~{fragments/Navbar :: Navbar}"></div>
+        <div
+            class="flex h-screen justify-center items-center place-items-center"
+        >
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">Add a buddy</h2>
+                    <form th:action="@{/user/buddy}" th:method="post" action="#" class="space-y-2">
+                        <label th:replace="~{fragments/input/Email :: Email(required=true)}"></label>    
+                        <div class="card-actions p-4 justify-center">
+                            <button class="btn btn-warning">
+                                Add buddy
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+    </body>
+</html>
