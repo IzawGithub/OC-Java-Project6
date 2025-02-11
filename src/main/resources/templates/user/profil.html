@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/Base}"
+>
+    <body layout:fragment="root" class="flex-1 flex-col">
+        <div th:replace="~{fragments/Navbar :: Navbar}"></div>
+        <div
+            class="flex h-screen justify-center items-center place-items-center"
+        >
+            <div class="card bg-base-100 min-w-80 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">Profil</h2>
+                    <div class="join p-4">
+                        <div class="join join-item join-vertical px-4">
+                            <h3 class="jox-item py-2">Id</h3>
+                            <h3 class="jox-item py-2">Username</h3>
+                            <h3 class="join-item py-2">Email</h3>
+                            <h3 class="join-item py-2">Password</h3>
+                            <h3 class="join-item py-2">Role</h3>
+                            <h3 class="join-item py-2">Balance</h3>
+                        </div>
+                        <div class="join join-item join-vertical px-4">
+                            <h3 class="join-item py-2">
+                                [[${user.getId()}]]
+                            </h3>
+                            <h3 class="join-item py-2">
+                                [[${user.getUsername()}]]
+                            </h3>
+                            <h3 class="join-item py-2">
+                                [[${user.getEmail()}]]
+                            </h3>
+                            <h3 class="join-item py-2">
+                                [[${user.getPassword()}]]
+                            </h3>
+                            <h3 class="join-item py-2">
+                                [[${user.getRole()}]]
+                            </h3>
+                            <h3 class="join-item pt-2">
+                                [[${#numbers.formatCurrency(user.getBalance().getUint())}]]
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="card-actions justify-around p-4">
+                        <a
+                            th:href="@{/user/profil/update}"
+                            role="button"
+                            class="btn btn-warning"
+                        >Modify</a>
+                        <button
+                            class="btn btn-error"
+                            onclick="deleteModal.showModal()"
+                        >
+                            Delete
+                        </button>
+                        <dialog id="deleteModal" class="modal">
+                            <div
+                                class="modal-box flex flex-col items-center w-6/12 max-w-5xl"
+                            >
+                                <form method="dialog">
+                                    <button
+                                        class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                                    >
+                                        ✕
+                                    </button>
+                                </form>
+                                <h3 class="text-lg font-bold self-start">
+                                    Confirm user deletion
+                                </h3>
+                                <p class="py-4">
+                                    Are you sure you want to delete your user
+                                    '[[${user.getEmail()}]]' ?
+                                </p>
+                                <div class="modal-action m-0">
+                                    <form
+                                        th:action="@{/user/profil/update}"
+                                        th:method="delete"
+                                        action="#"
+                                        class="flex-1"
+                                    >
+                                        <button class="btn btn-error">
+                                            DELETE USER
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </dialog>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

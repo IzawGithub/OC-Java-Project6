@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/Base}"
+>
+    <body layout:fragment="root" class="flex-1 flex-col">
+        <div th:replace="~{fragments/Navbar :: Navbar}"></div>
+        <form
+            th:action="@{/user/profil/update}"
+            th:method="put"
+            action="#"
+            class="flex-1"
+        >
+            <div
+                class="flex h-screen justify-center items-center place-items-center"
+            >
+                <div class="card bg-base-100 shadow-xl">
+                    <h2 class="card-title">Edit profil</h2>
+                    <div class="join p-4 items-center">
+                        <div class="join join-item join-vertical px-4">
+                            <h3 class="join-item py-5">Username</h3>
+                            <h3 class="join-item py-5">Email</h3>
+                            <h3 class="join-item py-5">Password</h3>
+                        </div>
+                        <div class="join join-item join-vertical px-4">
+                            <h3 class="join-item py-2">
+                                <label
+                                    th:replace="~{fragments/input/User :: User(placeholder=${user.getUsername()})}"
+                                ></label>
+                            </h3>
+                            <h3 class="join-item py-2">
+                                <label
+                                    th:replace="~{fragments/input/Email :: Email(placeholder=${user.getEmail()})}"
+                                ></label>
+                            </h3>
+                            <h3 class="join-item py-2">
+                                <label
+                                    th:replace="~{fragments/input/Password :: Password(placeholder=${user.getPassword()})}"
+                                ></label>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="card-actions justify-end p-4">
+                        <button class="btn btn-info">
+                            Update
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </body>
+</html>

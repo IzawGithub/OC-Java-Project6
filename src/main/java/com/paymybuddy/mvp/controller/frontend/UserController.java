@@ -3,8 +3,12 @@ package com.paymybuddy.mvp.controller.frontend;
 import com.paymybuddy.mvp.controller.backend.ApiAuthController;
 import com.paymybuddy.mvp.model.BankTransaction;
 import com.paymybuddy.mvp.model.dto.TransactionDTO;
+import com.paymybuddy.mvp.model.dto.UserUpdateDTO;
 import com.paymybuddy.mvp.model.internal.Money;
 import com.paymybuddy.mvp.service.TransactionService;
+import com.paymybuddy.mvp.service.UserService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,10 +16,13 @@ import lombok.Getter;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -86,7 +93,46 @@ public class UserController {
         return new ModelAndView("redirect:/user");
     }
 
+    @GetMapping("/profil")
+    public @NonNull ModelAndView profil(
+            @AuthenticationPrincipal @NonNull final UserDetails userAuth) {
+        final var user = helperController.authToUser(userAuth);
+        return new ModelAndView().addObject(user);
+    }
+
+    @GetMapping("/profil/update")
+    public @NonNull ModelAndView profilForm(
+            @AuthenticationPrincipal @NonNull final UserDetails userAuth) {
+        final var user = helperController.authToUser(userAuth);
+        return new ModelAndView().addObject(user);
+    }
+
+    @PutMapping("/profil/update")
+    public @NonNull ModelAndView tryProfilUpdate(
+            @AuthenticationPrincipal @NonNull final UserDetails userAuth,
+            @NonNull final UserUpdateDTO userUpdateDTO) {
+        final var user = helperController.authToUser(userAuth);
+        userService.tryUpdateUser(user, userUpdateDTO);
+        return new ModelAndView("redirect:/user/profil");
+    }
+
+    @DeleteMapping("/profil/update")
+    public @NonNull ModelAndView tryProfilDelete(
+            @NonNull final HttpServletRequest request,
+            @AuthenticationPrincipal @NonNull final UserDetails userAuth) {
+        final var user = helperController.authToUser(userAuth);
+        userService.tryDeleteUser(user);
+
+        // Logout programmatically, we can't redirect to /auth/log-out because it listen on POST
+        final var session = request.getSession();
+        session.invalidate();
+        SecurityContextHolder.clearContext();
+        return new ModelAndView("redirect:/");
+    }
+
     // -- Beans --
+
+    @NonNull private UserService userService;
 
     @NonNull private ApiAuthController helperController;
 
