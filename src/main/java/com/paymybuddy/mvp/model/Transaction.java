@@ -1,5 +1,6 @@
 package com.paymybuddy.mvp.model;
 
+import com.paymybuddy.mvp.model.dto.UserShowTransactionDTO;
 import com.paymybuddy.mvp.model.internal.Money;
 
 import jakarta.persistence.AttributeOverride;
@@ -20,6 +21,7 @@ import lombok.ToString;
 
 import org.hibernate.proxy.HibernateProxy;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -52,6 +54,24 @@ public class Transaction {
 
     @Builder.Default
     @NonNull private LocalDateTime date = LocalDateTime.now();
+
+    public UserShowTransactionDTO toUserShowTransactionDTO(@NonNull final User transactionUser) {
+        final User user;
+        final BigDecimal amount;
+        if (transactionUser.equals(sender)) {
+            user = receiver;
+            amount = this.amount.getUint().negate();
+        } else {
+            user = sender;
+            amount = this.amount.getUint();
+        }
+        return UserShowTransactionDTO.builder()
+                .user(user)
+                .amount(amount)
+                .description(description)
+                .date(date)
+                .build();
+    }
 
     @Override
     public final boolean equals(Object o) {

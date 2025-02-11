@@ -1,6 +1,7 @@
 package com.paymybuddy.mvp.model;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.paymybuddy.mvp.model.dto.UserShowTransactionDTO;
 import com.paymybuddy.mvp.model.internal.Money;
 
 import jakarta.persistence.AttributeOverride;
@@ -57,6 +58,15 @@ public class BankTransaction {
 
     @Builder.Default
     @NonNull private LocalDateTime date = LocalDateTime.now();
+
+    public UserShowTransactionDTO toUserShowTransactionDTO() {
+        final var amount =
+                switch (sens) {
+                    case ESens.FROM_APP_TO_BANK -> this.amount.getUint().negate();
+                    case ESens.FROM_BANK_TO_APP -> this.amount.getUint();
+                };
+        return UserShowTransactionDTO.builder().amount(amount).date(date).build();
+    }
 
     @Override
     public final boolean equals(Object o) {
