@@ -2,6 +2,8 @@ package com.paymybuddy.mvp.controller.frontend;
 
 import com.paymybuddy.mvp.controller.backend.ApiAuthController;
 import com.paymybuddy.mvp.model.BankTransaction;
+import com.paymybuddy.mvp.model.dto.TransactionDTO;
+import com.paymybuddy.mvp.model.internal.Money;
 import com.paymybuddy.mvp.service.TransactionService;
 
 import lombok.AllArgsConstructor;
@@ -13,9 +15,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.math.BigDecimal;
 
 @AllArgsConstructor
 @Controller
@@ -51,6 +56,34 @@ public class UserController {
                 .addObject(user)
                 .addObject("transactions", transactions)
                 .addObject("bankTransactions", bankTransaction);
+    }
+
+
+    @GetMapping("/bank")
+    public @NonNull ModelAndView bank(
+            @AuthenticationPrincipal @NonNull final UserDetails userAuth) {
+        final var user = helperController.authToUser(userAuth);
+        return new ModelAndView().addObject(user);
+    }
+
+    @PostMapping("/bank/fromAppToBank")
+    public ModelAndView fromAppToBank(
+            @AuthenticationPrincipal @NonNull final UserDetails userAuth,
+            @NonNull final BigDecimal change) {
+        final var money = Money.builder().uint(change).tryBuild().expect();
+        final var user = helperController.authToUser(userAuth);
+        transactionService.tryFromAppToBank(user, money);
+        return new ModelAndView("redirect:/user");
+    }
+
+    @PostMapping("/bank/fromBankToApp")
+    public ModelAndView fromBankToApp(
+            @AuthenticationPrincipal @NonNull final UserDetails userAuth,
+            @NonNull final BigDecimal change) {
+        final var money = Money.builder().uint(change).tryBuild().expect();
+        final var user = helperController.authToUser(userAuth);
+        transactionService.fromBankToApp(user, money);
+        return new ModelAndView("redirect:/user");
     }
 
     // -- Beans --

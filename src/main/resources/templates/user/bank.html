@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/Base}"
+>
+    <body layout:fragment="root" class="flex-1 flex-col">
+        <div th:replace="~{fragments/Navbar :: Navbar}"></div>
+        <div
+            class="flex h-screen justify-center items-center place-items-center"
+        >
+            <div class="card bg-base-100 min-w-80 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">Add or remove fund</h2>
+                    <div class="join p-4">
+                        <div class="join join-item join-vertical px-4">
+                            <h3 class="jox-item py-2">Username</h3>
+                            <h3 class="join-item py-2">Current balance:</h3>
+                        </div>
+                        <div class="join join-item join-vertical px-4">
+                            <h3 class="join-item py-2">
+                                [[${user.getUsername()}]]
+                            </h3>
+                            <h3 class="join-item pt-2">
+                                [[${#numbers.formatCurrency(user.getBalance().getUint())}]]
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="card-actions justify-around p-4">
+                        <form
+                            th:action="@{/user/bank/fromBankToApp}"
+                            th:method="post"
+                            action="#"
+                            class="flex flex-col items-center space-y-2 py-2"
+                        >
+                            <input
+                                th:replace="~{fragments/input/Change :: Change(required=true)}"
+                            />
+                            <button class="btn btn-info">
+                                Add fund to account
+                            </button>
+                        </form>
+                        <form
+                            th:action="@{/user/bank/fromAppToBank}"
+                            th:method="post"
+                            action="#"
+                            class="flex flex-col items-center space-y-2 py-2"
+                        >
+                            <input
+                                th:replace="~{fragments/input/Change :: Change(required=true)}"
+                            />
+                            <button class="btn btn-info">
+                                Remove fund from account
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
