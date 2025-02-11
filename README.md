@@ -8,6 +8,7 @@ PayMyBuddy enables the sharing of real world currency between users in a simple,
   - [Table of contents](#table-of-contents)
   - [Running the application](#running-the-application)
     - [Gradle](#gradle)
+  - [Database schema](#database-schema)
 
 ## Running the application
 
@@ -44,3 +45,7 @@ cargo install sqlx-cli
 sqlx database setup
 ./gradlew bootRun
 ```
+
+## Database schema
+
+![Schema](./assets/db_physical_schema.svg)
