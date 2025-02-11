@@ -20,4 +20,9 @@ public class AuthController {
     public @NonNull ModelAndView home(@AuthenticationPrincipal final UserDetails userAuth) {
         return new ModelAndView("/auth/index.html");
     }
+
+    @GetMapping("/log-in")
+    public @NonNull ModelAndView logIn(@AuthenticationPrincipal final UserDetails userAuth) {
+        return new ModelAndView();
+    }
 }
