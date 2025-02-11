@@ -66,6 +66,14 @@ public class UserController {
                 .addObject("bankTransactions", bankTransaction);
     }
 
+    @PostMapping("/transaction")
+    public @NonNull ModelAndView fromUserToUser(
+            @AuthenticationPrincipal @NonNull final UserDetails userAuth,
+            @NonNull final TransactionDTO transactionDTO) {
+        final var user = helperController.authToUser(userAuth);
+        transactionService.tryFromUserToUser(user, transactionDTO);
+        return new ModelAndView("redirect:/user");
+    }
 
     @GetMapping("/bank")
     public @NonNull ModelAndView bank(

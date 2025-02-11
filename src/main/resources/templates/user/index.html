@@ -27,6 +27,17 @@
     </head>
     <body layout:fragment="root">
         <div th:replace="~{fragments/Navbar :: Navbar}"></div>
+        <div class="flex justify-center items-center place-items-center w-full">
+            <div class="card bg-base-100 w-3/4">
+                <div class="card-body">
+                    <h2 class="card-title">Profil</h2>
+                    <form
+                        th:replace="~{fragments/user/FormTransaction :: FormTransaction}"
+                    >
+                    </form>
+                </div>
+            </div>
+        </div>
         <div class="flex justify-around p-24">
             <div
                 th:replace="~{fragments/user/TableTransactions :: TableTransactions}"

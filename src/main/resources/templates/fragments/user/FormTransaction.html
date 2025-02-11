@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+>
+    <form
+        th:fragment="FormTransaction"
+        th:action="@{/user/transaction}"
+        th:method="post"
+        class="flex"
+    >
+        <div class="flex-1 join justify-around">
+            <details class="join-item dropdown">
+                <summary class="btn">
+                    Select a buddy
+                </summary>
+                <ul
+                    class="menu dropdown-content bg-base-100 rounded-box w-40 shadow"
+                >
+                    <label
+                        th:each="buddy: ${user.getBuddies()}"
+                        class="label cursor-pointer"
+                    >
+                        <span>[[${buddy.getUsername()}]]</span>
+                        <input
+                            th:value="${buddy.getEmail()}"
+                            type="radio"
+                            name="email"
+                            class="radio"
+                            required
+                        />
+                    </label>
+                </ul>
+            </details>
+            <input
+                type="text"
+                name="description"
+                placeholder="Description"
+                class="join-item input input-bordered"
+            />
+
+            <input
+                th:replace="~{fragments/input/Change :: Change(required=true)}"
+            />
+            <div class="join-item justify-around">
+                <button class="btn btn-info">Pay</button>
+            </div>
+        </div>
+    </form>
+</html>
