@@ -1,5 +1,9 @@
 # Pay My Buddy
 
+<div align="center">
+    <img src="./assets/logo.svg" alt="Logo PayMyBuddy" width="10%">
+</div>
+
 PayMyBuddy enables the sharing of real world currency between users in a simple, fast, and secure manner.
 
 ## Table of contents
