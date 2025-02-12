@@ -9,7 +9,11 @@ import com.paymybuddy.mvp.model.internal.Email;
 import com.paymybuddy.mvp.model.internal.Money;
 import com.paymybuddy.mvp.model.internal.Secret;
 
+import net.xyzsd.dichotomy.Maybe;
+
 import org.springframework.lang.NonNull;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.math.BigDecimal;
@@ -76,6 +80,17 @@ public final class HelperTest {
         }
         return sanitisedHtml;
     }
+
+    public static Maybe<Authentication> expectAuth(@NonNull final ResultActions mvc)
+            throws Exception {
+        return Maybe.ofNullable(
+                        (SecurityContextImpl)
+                                andExpectRedirectAuth(mvc)
+                                        .andReturn()
+                                        .getRequest()
+                                        .getAttribute(
+                                                "org.springframework.security.web.context.RequestAttributeSecurityContextRepository.SPRING_SECURITY_CONTEXT"))
+                .flatMap(securityContext -> Maybe.ofNullable(securityContext.getAuthentication()));
     }
 
     // -- lombok.ExtensionMethod --
