@@ -13,6 +13,7 @@
                 <div class="card-body">
                     <h2 th:replace="~{fragments/Title :: Title}"></h2>
 
+                    <div th:replace="~{fragments/Error :: Error}"></div>
                     <div
                         th:if="${param.error}"
                         role="alert"
