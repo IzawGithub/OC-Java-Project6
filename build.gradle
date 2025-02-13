@@ -50,7 +50,7 @@ dependencies {
 
     // -- Frontend --
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.3.0'
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.4.0'
 
     // -- Testing --
     testAnnotationProcessor 'org.projectlombok:lombok'
