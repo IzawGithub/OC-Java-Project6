@@ -6,6 +6,10 @@
 
 PayMyBuddy enables the sharing of real world currency between users in a simple, fast, and secure manner.
 
+<div align="center">
+    <video src="./assets/demo.mp4" alt="Demo video" width="80%" controls></video>
+</div>
+
 ## Table of contents
 
 - [Pay My Buddy](#pay-my-buddy)
